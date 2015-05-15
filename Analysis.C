@@ -4,8 +4,9 @@
 #include <TStyle.h>
 #include <TCanvas.h>
 #include <TMath.h> 
-
-
+#include <string>
+#include <sstream> 
+using namespace std;
 
 void Analysis::ProcessJet(int njet)
 {
@@ -19,7 +20,12 @@ void Analysis::ProcessJet(int njet)
 	
 	*/
 	
-	string sjet = to_string(njet);
+	cout<<"hello"<<endl;
+	std::ostringstream ss;
+	ss << njet;
+	std::string sjet=ss.str();
+	
+	
 	
 	/* Initalise histograms */
 	 
@@ -145,4 +151,3 @@ void Analysis::Loop()
   }
      
 }
-
