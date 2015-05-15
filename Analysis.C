@@ -4,11 +4,8 @@
 #include <TStyle.h>
 #include <TCanvas.h>
 #include <TMath.h> 
-#include <string>
-#include <sstream> 
-using namespace std;
 
-void Analysis::ProcessJet(int njet)
+void Analysis::ProcessJet(Int_t njet)
 {
 	/* 
 	
@@ -20,22 +17,19 @@ void Analysis::ProcessJet(int njet)
 	
 	*/
 	
-	cout<<"hello"<<endl;
-	std::ostringstream ss;
-	ss << njet;
-	std::string sjet=ss.str();
 	
+	TString sjet = TString::Itoa(njet, 10);
 	
 	
 	/* Initalise histograms */
 	 
-	TH1D* hx = new TH1D(("Px" + sjet).c_str(), ("Px Jet " + sjet).c_str(), 30,0,300);		//WHY DOES THIS USE C STRINGS!?
-	TH1D* hy = new TH1D(("Py" + sjet).c_str(), ("Py Jet " + sjet).c_str(), 30,0,300);
-	TH1D* hz = new TH1D(("Pz" + sjet).c_str(), ("Pz Jet " + sjet).c_str(), 30,0,300);
+	TH1D* hx = new TH1D("Px" + sjet, "Px Jet " + sjet, 30,0,300);		//WHY DOES THIS USE C STRINGS!?
+	TH1D* hy = new TH1D("Py" + sjet, "Py Jet " + sjet, 30,0,300);
+	TH1D* hz = new TH1D("Pz" + sjet, "Pz Jet " + sjet, 30,0,300);
 	
-	TH1D* ht = new TH1D(("Pt" + sjet).c_str(), ("Transverse P Jet " + sjet).c_str(), 30,0,300);
+	TH1D* ht = new TH1D("Pt" + sjet, "Transverse P Jet " + sjet, 30,0,300);
 	
-	TH2F* hyz = new TH2F("Pyz", ("Py vs Pz Jet " + sjet).c_str(), 30,0,300,30,0,300);
+	TH2F* hyz = new TH2F("Pyz", "Py vs Pz Jet " + sjet, 30,0,300,30,0,300);
 	
 	/* Loop over the chain	*/
 	if (fChain == 0) return;
@@ -74,9 +68,9 @@ void Analysis::ProcessJet(int njet)
 	}
 	
 	/* Render the histograms */
-	TCanvas *c1 = new TCanvas("c1",("Jet " + sjet+ " Momentum Plot").c_str());
+	TCanvas *c1 = new TCanvas("c1", "Jet " + sjet+ " Momentum Plot");
 	hyz->Draw();
-	TCanvas *c2 = new TCanvas("c2",("Jet " + sjet+ " Momentum Plot").c_str());
+	TCanvas *c2 = new TCanvas("c2", "Jet " + sjet+ " Momentum Plot");
 	c2->Divide(2,2);
 	c2->cd(1); hx->Draw();
 	c2->cd(2); hy->Draw();
