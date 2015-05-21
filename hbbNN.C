@@ -1,3 +1,5 @@
+#include "trainNetwork.C"
+
 void hbbNN(Int_t ntrain=15) {
 // Example of a Multi Layer Perceptron
 // For a Tevatron search for SUSY Higgs in bh->bbb, a neural network 
@@ -195,45 +197,6 @@ void hbbNN(Int_t ntrain=15) {
 	c1->cd(6);  sphericitys->Draw(); sphericityb->	SetLineColor(kRed);   sphericityb->Draw("same");	
 	c1->SaveAs("sig_background_distr.pdf");	
 	
-	//Part 2 training the NN
-
-   /* Before you go on and uncomment this part of the code make sure you have 
-      saved the plots of the signal and background input variables.*/
-
-//Now make a neural network. Example structure string given below 
-   TString _struct_string = "@dEta,@pBalance,@Angle:6:1:type";
-   TMultiLayerPerceptron *mlp = new TMultiLayerPerceptron(_struct_string, simu, "Entry$%2","(Entry$+1)%2");
-   cout << "hepp" << endl;
-//_struct_string takes the form "@var1,@var2,@var3,...,@varn:A:B:type"
-//First part is list of input variables separated by commas 
-//    (put @ at the beginning of each variable name
-//A is the number of nodes in first hidden layer 
-//    (at least 2 x number of variables 
-//B is the number of nodes in the second hidden layer (usually 1)
-//type is the signal/background discriminant
-  
-//Train the NN   
-   mlp->Train(100, "text,graph,update=10");
-
-//Save as C++ file
-   mlp->Export("test","C++");
-
-//Use TMLPAnalyzer to see what it looks for  
-   TCanvas* mlpa_canvas = new TCanvas("mlpa_canvas","Network analysis");
-   TMLPAnalyzer ana(mlp);
-   // Initialisation
-   ana.GatherInformations();
-   // output to the console
-   ana.CheckNetwork();
-    // shows how each variable influences the network
-   ana.DrawDInputs();
-   TCanvas* mlpa_canvas3 = new TCanvas("mlpa_canvas3","Network analysis");
-    // shows the network structure
-   mlp->Draw();
-   TCanvas* mlpa_canvas4 = new TCanvas("mlpa_canvas4","Network analysis");
-    // draws the resulting network
-   ana.DrawNetwork(0,"type==1","type==0");
-   //mlpa_canvas->cd(4);
 
 
 /*Congratulations you have trained your first Neural Network to separate a SUSY Higgs signal at the Tevatron from the multijet bbb background!
@@ -245,5 +208,16 @@ Save all the plots from the training.
 2) Now try to train the NN for a different sets of variables and different structures of the NN. Observe how this affects the length of the training and the separation of signal and background. Try to find the best NN to separate signal from background. Good luck.
   
 */
+	
+	for(Int_t i = 1; i++; i < 5)
+	{ 
+		TString structure = "@dEta, @dPhi, @EtaH, @pBalance, @Sphericity, @Angle:" + TString::Itoa(i*5, 10) + ":1:type";
+		trainNetwork(simu, structure, 100);
 
+	}
 }
+
+
+
+
+
