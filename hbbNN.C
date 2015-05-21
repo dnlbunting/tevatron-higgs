@@ -199,16 +199,6 @@ void hbbNN(Int_t ntrain=15) {
 	
 
 
-/*Congratulations you have trained your first Neural Network to separate a SUSY Higgs signal at the Tevatron from the multijet bbb background!
-
-1) Have a look at the plot of the error vs. epoch. It shows how the error gets better for every time you loop over the training sample. The red graph shows the error for a separate sample of events which are not used in the training (The code as it is set up splits the training tree in two and only use half the events for training, the other half is used to test the performance.) Why are we using a separate set of events for testing the performance? 
-Adjust the number of cycles to train the NN with the variable 'ntrain'. Try to find a length of training which gives the smallest error for the test sample.
-Save all the plots from the training.
- 
-2) Now try to train the NN for a different sets of variables and different structures of the NN. Observe how this affects the length of the training and the separation of signal and background. Try to find the best NN to separate signal from background. Good luck.
-  
-*/
-	
 	for(Int_t i = 1; i++; i < 5)
 	{ 
 		TString structure = "@dEta, @dPhi, @EtaH, @pBalance, @Sphericity, @Angle:" + TString::Itoa(i*5, 10) + ":1:type";
@@ -216,8 +206,3 @@ Save all the plots from the training.
 
 	}
 }
-
-
-
-
-
