@@ -195,13 +195,17 @@ void hbbNN(Int_t ntrain=15) {
 	c1->cd(6);  sphericitys->Draw(); sphericityb->	SetLineColor(kRed);   sphericityb->Draw("same");	
 	c1->SaveAs("sig_background_distr.pdf");	
 	
+//Loop over neural network to try all combinations
+
+
 	//Part 2 training the NN
 
    /* Before you go on and uncomment this part of the code make sure you have 
-      saved the plots of the signal and background input variables.*/
+      saved the plots of the signal and background input variables.*/	  
 
+  
 //Now make a neural network. Example structure string given below 
-   TString _struct_string = "@dEta,@pBalance,@Angle:6:1:type";
+   TString _struct_string = "@dEta,@dPhi,@Sphericity,@pBalance,@Angle,@EtaH:30:1:type";
    TMultiLayerPerceptron *mlp = new TMultiLayerPerceptron(_struct_string, simu, "Entry$%2","(Entry$+1)%2");
    cout << "hepp" << endl;
 //_struct_string takes the form "@var1,@var2,@var3,...,@varn:A:B:type"
@@ -213,7 +217,7 @@ void hbbNN(Int_t ntrain=15) {
 //type is the signal/background discriminant
   
 //Train the NN   
-   mlp->Train(100, "text,graph,update=10");
+   mlp->Train(110, "text,graph,update=10");
 
 //Save as C++ file
    mlp->Export("test","C++");
@@ -245,5 +249,6 @@ Save all the plots from the training.
 2) Now try to train the NN for a different sets of variables and different structures of the NN. Observe how this affects the length of the training and the separation of signal and background. Try to find the best NN to separate signal from background. Good luck.
   
 */
-
 }
+
+
