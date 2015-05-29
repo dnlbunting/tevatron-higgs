@@ -15,11 +15,12 @@ typedef struct
     TTree* train_signal;
     TTree* test_background;
     TTree* train_background; 
+	TTree* merged; 
 
 } MCData_t;
 
 
-void CreateTraining(TString working_directory   = "~/Documents/Imperial/project/tevatron-higgs/";)
+void CreateTraining(TString working_directory   = "~/Documents/Imperial/project/tevatron-higgs/")
 {
 		/*
 			Reads in the outputs from the seperate signal and background Monte Carlo simulations, 
@@ -69,7 +70,7 @@ void CreateTraining(TString working_directory   = "~/Documents/Imperial/project/
 			
 			/* Output branch addresses */
 		    Double_t mh, deta, dphi, angle, etah, pbalance, sphericity;
-			Bool_t isSignal;
+			Bool_t isSignal, isTrain;
 			
 			cout << "Creating output trees" << endl;
 			                                                                                                                                              	
@@ -82,8 +83,9 @@ void CreateTraining(TString working_directory   = "~/Documents/Imperial/project/
 			test_signal->Branch("pBalance",  &pbalance,  "pBalance/D");      		    train_signal->Branch("pBalance",  &pbalance,  "pBalance/D");	          	
 			test_signal->Branch("EtaH", &etah, "EtaH/D");                    		    train_signal->Branch("EtaH", &etah, "EtaH/D"); 	                      	
 			test_signal->Branch("Sphericity",  &sphericity,  "Sphericity/D");		    train_signal->Branch("Sphericity",  &sphericity,  "Sphericity/D");	  	
-			test_signal->Branch("isSignal",   &isSignal,   "type/O");        		    train_signal->Branch("isSignal",   &isSignal,   "type/O");	          	
-			
+			test_signal->Branch("isSignal",   &isSignal,   "type/O");        		    train_signal->Branch("isSignal",   &isSignal,   "type/O");
+			test_signal->Branch("isTrain",   &isTrain,   "type/O");        		    train_signal->Branch("isTrain",   &isTrain,   "type/O");	          	
+				          				
 			test_background->Branch("MH",   &MH,   "MH/D");			             		train_background->Branch("MH",   &MH,   "MH/D");				              	
 			test_background->Branch("dEta", &deta, "dEta/D");                    		train_background->Branch("dEta", &deta, "dEta/D");	                      	
 			test_background->Branch("dPhi",  &dphi,  "dPhi/D");                  		train_background->Branch("dPhi",  &dphi,  "dPhi/D");	                      	
@@ -91,10 +93,12 @@ void CreateTraining(TString working_directory   = "~/Documents/Imperial/project/
 			test_background->Branch("pBalance",  &pbalance,  "pBalance/D");      		train_background->Branch("pBalance",  &pbalance,  "pBalance/D");	          	
 			test_background->Branch("EtaH", &etah, "EtaH/D");                    		train_background->Branch("EtaH", &etah, "EtaH/D"); 	                      	
 			test_background->Branch("Sphericity",  &sphericity,  "Sphericity/D");		train_background->Branch("Sphericity",  &sphericity,  "Sphericity/D");	  	
-			test_background->Branch("isSignal",   &isSignal,   "type/O");        		train_background->Branch("isSignal",   &isSignal,   "type/O");	     
+			test_background->Branch("isSignal",   &isSignal,   "type/O");        		train_background->Branch("isSignal",   &isSignal,   "type/O");
+			test_background->Branch("isTrain",   &isTrain,   "type/O");        		train_background->Branch("isTrain",   &isTrain,   "type/O");	  	     
           
 		  	cout << "Filtering signal tree" << endl;
-		    /* Iterate over signal tree */    
+		    /* Iterate over signal tree */  
+			Int_t nS_train, nS_test = 0;  
 			for(Int_t i = 0; i < signal_tree->GetEntries(); ++i)
 			{
 				signal_tree->GetEntry(i);
@@ -118,15 +122,16 @@ void CreateTraining(TString working_directory   = "~/Documents/Imperial/project/
 		            isSignal = true; 
 
 					/* 50/50 split between train and test */
-					if(evtNum % 2){test_signal->Fill();}
-					else{train_signal->Fill();}
+					if(nS_train > nS_test){isTrain =false; test_signal->Fill(); nS_test++;}
+					else{isTrain =true; train_signal->Fill(); nS_train++;}
 										
 				}
 								
 			}
 			
 		  	cout << "Filtering background tree" << endl;		
-			/* Iterate over background tree */    
+			/* Iterate over background tree */ 
+			Int_t nB_train, nB_test = 0;    
 			for(Int_t i = 0; i < background_tree->GetEntries(); ++i)
 			{
 				background_tree->GetEntry(i);
@@ -136,10 +141,12 @@ void CreateTraining(TString working_directory   = "~/Documents/Imperial/project/
 				   	 	- the two leading pT jets come from the Higgs decay (typeH[0]==1), 
 						- these two jets are separated by sqrt(dEta[0]*dEta[0]+dPhi[0]*dPhi[0]) > 1,
 		            	- the invariant di-jet mass is greater than 50 GeV
+						- Only keep as many background events there are signal events
 				*/
 		      	
-			    if ( Njets==3 && typeH[0]==1 && MH[0]>50  && sqrt(dEta[0]*dEta[0]+dPhi[0]*dPhi[0]) > 1. )
+			    if ( Njets==3 && typeH[0]==1 && MH[0]>50  && sqrt(dEta[0]*dEta[0]+dPhi[0]*dPhi[0]) > 1. && nB_train+nB_test < nS_train+nS_test )
 				{
+
 					/* Load up output branches */
  			        deta = dEta[0];
 			        dphi = 2*acos(0)- dPhi[0]; 
@@ -150,8 +157,8 @@ void CreateTraining(TString working_directory   = "~/Documents/Imperial/project/
 		            isSignal = false; 
 
 					/* 50/50 split between train and test */
-					if(evtNum % 2){test_background->Fill();}
-					else{train_background->Fill();}
+					if(nB_train > nB_test){isTrain =false; test_background->Fill(); nB_test++;}
+					else{isTrain =true; train_background->Fill(); nB_train++;}
 										
 				}
 								
@@ -159,11 +166,25 @@ void CreateTraining(TString working_directory   = "~/Documents/Imperial/project/
 
 
 		cout << "Writing output trees to " << output_file_str << endl;
+		cout << "           Test\tTrain" << endl;
+		
+		cout << "Signal     " << nS_test << "\t" << nS_train << endl;
+		cout << "Background " << nB_test << "\t" << nB_train << endl;
+		
+		TList *tlist = new TList;
+		tlist->Add(train_signal);
+		tlist->Add(test_signal);
+		tlist->Add(train_background);
+		tlist->Add(test_background);
+		TTree* merged = TTree::MergeTrees(tlist);
+	    merged->SetName("merged");
+		
+		
 		output->Write();
 }
 
 
-MCData_t LoadTraining(TString file_str)
+MCData_t LoadTraining(TString file_str = "~/Documents/Imperial/project/tevatron-higgs/combined_output.root")
 {
 	/* 	
 		Loads the output of CreateTraining
@@ -176,6 +197,7 @@ MCData_t LoadTraining(TString file_str)
     	data.train_signal = (TTree*)file->Get("train_signal");
 		data.test_background = (TTree*)file->Get("test_background");
     	data.train_background = (TTree*)file->Get("train_background"); 
+    	data.merged = (TTree*)file->Get("merged"); 
 		
 		cout << "Loaded data from " << file_str << endl;
 		return(data);	
