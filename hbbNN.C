@@ -201,7 +201,9 @@ void hbbNN(Int_t ntrain=15) {
 
 	for(Int_t i = 1; i++; i < 5)
 	{ 
-		TString structure = "@dEta, @dPhi, @EtaH, @pBalance, @Sphericity, @Angle:" + TString::Itoa(i*5, 10) + ":1:type";
+		stringstream ss;
+		ss << i*5;
+		TString structure = "@dEta, @dPhi, @EtaH, @pBalance, @Sphericity, @Angle:" + ss.str() + ":1:type";;
 		trainNetwork(simu, structure, 100);
 
 	}
