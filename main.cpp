@@ -8,6 +8,7 @@
 #include <TCanvas.h>
 #include <TList.h>
 #include <TGraph.h>
+#include <TMath.h>
 #include <TF1.h>
 #include<iostream>
 #include <TObjArray.h>
@@ -29,7 +30,8 @@ int main (int argc, char  *argv[])
 	MCData_t data = LoadTraining("combined_output.root");
 	
 	TTree* evaluate =  new TTree();
-	Double_t auc = 0.;
+	Double_t auc, max_sig = 0.;
+	Int_t n=0;
 	TString ss = "";
 	TString* ssp = &ss;
 	
@@ -43,6 +45,8 @@ int main (int argc, char  *argv[])
 		
 		mlp_training->SetBranchAddress("eval", &evaluate);
 		mlp_training->SetBranchAddress("auc", &auc);
+		mlp_training->SetBranchAddress("max_sig", &max_sig);
+		mlp_training->SetBranchAddress("n", &n);
 		mlp_training->SetBranchAddress("struct_string", &ssp);
 					
 	}
@@ -52,6 +56,8 @@ int main (int argc, char  *argv[])
 		
 		mlp_training->Branch("eval", &evaluate);
 		mlp_training->Branch("auc", &auc, "auc/D");
+		mlp_training->Branch("max_sig", &max_sig, "auc/D");
+		mlp_training->Branch("n", &n, "n/I");
 		mlp_training->Branch("struct_string", &ssp);
 	}
 	
@@ -62,14 +68,14 @@ int main (int argc, char  *argv[])
 		cout << "Please enter a MLP structure string and a number of epochs to train for or q to save and quit:" << endl;
 		cin >> ss >> n_epoch;
 		if (ss == "q") { break;}
-
+		n = n_epoch.Atoi();
 		stringstream *captured_cout = new stringstream() ;	
-		TMultiLayerPerceptron* mlp = TrainNetworkROOT(data.merged, "@MH, @dEta, @dPhi, @Angle, @pBalance, @EtaH, @Sphericity:" + ss + ":1:isSignal", captured_cout, n_epoch.Atoi());
+		TMultiLayerPerceptron* mlp = TrainNetworkROOT(data.merged, "@MH, @dEta, @dPhi, @Angle, @pBalance, @EtaH, @Sphericity:" + ss + ":1:isSignal", captured_cout, n);
 		evaluate = Evaluate(mlp, data, 100);
 		
 		TString fname = "plots/" + ss.ReplaceAll(TString(':'), 1, TString('_'), 1) + "," + n_epoch;
 
-		SignificancePlot(evaluate, fname);		
+		max_sig = SignificancePlot(evaluate, fname);		
 		ErrorPlot(captured_cout, fname);
 		auc = ROCPlot(evaluate, fname);
 		SeparationPlot(data, mlp, fname);
@@ -80,6 +86,7 @@ int main (int argc, char  *argv[])
 	}
  	
 	f->Write();
+	f->Close();
 	cout << "Done" <<endl;
 	
 	return 0;

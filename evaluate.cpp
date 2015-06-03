@@ -89,7 +89,7 @@ Double_t ROCPlot(TTree* evaluate, TString fname)
 }
 
 
-void SignificancePlot(TTree* evaluate, TString fname)
+Double_t SignificancePlot(TTree* evaluate, TString fname)
 {
 
 	TCanvas *sig_cnavas=new TCanvas("sig_cnavas");		
@@ -104,6 +104,13 @@ void SignificancePlot(TTree* evaluate, TString fname)
 	sig_cnavas->Update();
 	sig_cnavas->SaveAs(fname + "_sig.pdf"); 
 		
+    int n = sig_gr->GetN();
+    Double_t *x = sig_gr->GetY();
+	
+	cout << n << x <<endl;
+
+    int locmin = TMath::LocMax(n,x);
+	return(x[locmin]);
 
 }
 
