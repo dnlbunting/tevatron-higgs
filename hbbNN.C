@@ -35,10 +35,10 @@ void hbbNN(Int_t ntrain=15) {
    // The 2 trees are merged into one, and a "type" branch, 
    // equal to 1 for the signal and 0 for the background is added.
 
-   TChain * signal = new TChain("higgsSearch","");
+   TChain * signal_ = new TChain("higgsSearch","");
 
-   //Use a Higgs signal at a mass of  110 GeV   
-    signal->Add("LHinput-cut_2b25_1j15-Tight-MC_higgs110GeV.root/higgsSearch");
+   //Use a Higgs signal_ at a mass of  110 GeV   
+    signal_->Add("LHinput-cut_2b25_1j15-Tight-MC_higgs110GeV.root/higgsSearch");
 
     //Use a background of multijet bbb events
    TChain *background = new TChain("higgsSearch","");
@@ -50,46 +50,46 @@ void hbbNN(Int_t ntrain=15) {
 
    Double_t nnoutxlm[4], MH[6], dEta[6], dPhi[6], Angle[6], EtaH[6], pBalance[6], Sphericity;
    Double_t dphi, deta, angle, etah, pbalance, sphericity; 
-   Int_t Njets, typeH[6], typeO, nsignal, nbkg;
+   Int_t Njets, typeH[6], typeO, nsignal_, nbkg;
 
-   //counters for signal and background events
-   nsignal=0;
+   //counters for signal_ and background events
+   nsignal_=0;
    nbkg=0;
 
    // 
-   //Set branch addresses to use from signal and background trees
+   //Set branch addresses to use from signal_ and background trees
    //Description of variables inline below. 
-   //Draw histograms of these  variables for signal and background on top 
+   //Draw histograms of these  variables for signal_ and background on top 
    //of eachother in different colors. 
    //Save these plots (you can look up how to save plots to files at root.cern.ch)
  
    //Invariant di-jet mass
-   signal->SetBranchAddress("MH",  &MH);
+   signal_->SetBranchAddress("MH",  &MH);
 
    //Delta eta, difference in pseudorapidity (spatial coodinate used to 
    //describe angle with the beam axis = -ln(tan(theta/2))
-   signal->SetBranchAddress("dEta",    &dEta);
+   signal_->SetBranchAddress("dEta",    &dEta);
 
    //Delta phi, azimuthal angle (going from 0 to 2pi around the beampipe)
-   signal->SetBranchAddress("dPhi",  &dPhi);
+   signal_->SetBranchAddress("dPhi",  &dPhi);
 
    //Angle between the leading jet and the combined jet-pair
-   signal->SetBranchAddress("Eta1mEtaH", &Angle);
+   signal_->SetBranchAddress("Eta1mEtaH", &Angle);
 
    //Pseudorapidity of the combined jet-pair
-   signal->SetBranchAddress("EtaH",  &EtaH);
+   signal_->SetBranchAddress("EtaH",  &EtaH);
 
    //Which jet-pair comes from the true Higgs decay
-   signal->SetBranchAddress("type", &typeH);
+   signal_->SetBranchAddress("type", &typeH);
 
    //Momentum balance of the jet-pair: p1-p2/p1+p2 
-   signal->SetBranchAddress("pBalance",  &pBalance);
+   signal_->SetBranchAddress("pBalance",  &pBalance);
 
    //Number of jets in the event 
-   signal->SetBranchAddress("Njets", &Njets);
+   signal_->SetBranchAddress("Njets", &Njets);
 
    //Event sphericity (measure of how spherical, round, the event is)
-   signal->SetBranchAddress("FW_H2", &Sphericity);
+   signal_->SetBranchAddress("FW_H2", &Sphericity);
 
    //same for background
    background->SetBranchAddress("MH",  &MH);
@@ -109,11 +109,12 @@ void hbbNN(Int_t ntrain=15) {
    simu->Branch("EtaH", &etah, "EtaH/D");
    simu->Branch("Sphericity",  &sphericity,  "Sphericity/D");
    simu->Branch("type",   &typeO,   "type/I");
+   simu->Branch("MH",   &MH,   "MH/D");
   
-   //loop over signal and select events to use for training 
+   //loop over signal_ and select events to use for training 
    Int_t i;
-   for (i = 0; i < signal->GetEntries(); i++) {
-     signal->GetEntry(i);
+   for (i = 0; i < signal_->GetEntries(); i++) {
+     signal_->GetEntry(i);
      //only consider events with 3 jets
       if (Njets==3){
           typeO=0; 
@@ -122,15 +123,15 @@ void hbbNN(Int_t ntrain=15) {
 	  //sqrt(dEta[0]*dEta[0]+dPhi[0]*dPhi[0]) > 1, and the invariant 
           //di-jet mass is greater than 50 GeV
           if (typeH[0]==1 && sqrt(dEta[0]*dEta[0]+dPhi[0]*dPhi[0]) > 1. && MH[0]>50.){          
-	    deta = dEta[0];
-	    dphi =2*acos(0)- dPhi[0]; 
+	        deta = dEta[0];
+	        dphi =2*acos(0)- dPhi[0]; 
             angle = Angle[0];
             pbalance = pBalance[0];
             etah = EtaH[0];
             sphericity = Sphericity;
             typeO=1; 
 	   }
-	  //fill selected signal events (type0==1)
+	  //fill selected signal_ events (type0==1)
           if (typeO==1){
 	    //fill the histograms like this:
 	      detas->Fill(deta); 	      
@@ -143,12 +144,12 @@ void hbbNN(Int_t ntrain=15) {
 
 	      //fill the training tree   
               simu->Fill();
-              nsignal++; 
+              nsignal_++; 
 	  }
       }
    }
 
-   cout << nsignal <<endl; 
+   cout << nsignal_ <<endl; 
    //now loop over background events
    for (i = 0; i < background->GetEntries(); i++) {
       background->GetEntry(i);
@@ -165,8 +166,8 @@ void hbbNN(Int_t ntrain=15) {
             typeO=0; 
           }
 	  //fill the selected background events until you have the same 
-          //number as signal
-          if (typeO==0 && nbkg<nsignal){
+          //number as signal_
+          if (typeO==0 && nbkg<nsignal_){
 	    //fill the background histograms here:
     	      detab->Fill(deta); 	      
     	      dphib->Fill(dphi);
@@ -177,32 +178,18 @@ void hbbNN(Int_t ntrain=15) {
             
 	    
 	    
-	    nbkg++;
+	        nbkg++;		
             simu->Fill();
+						
 	  } 
       }
 
    }
    cout << nbkg << endl;   
-
-
-   	/*Plot the simulated and background variable distributions */
-	TCanvas *c1 = new TCanvas("c2", "Signal and Background Distributions");
-	c1->Divide(2,3);
-	c1->cd(1);  dphis->Draw();       dphib->	SetLineColor(kRed);   dphib->Draw("same");	
-	c1->cd(2);  detas->Draw();       detab->	SetLineColor(kRed);   detab->Draw("same");	
-	c1->cd(3);  angles->Draw();      angleb->	SetLineColor(kRed);   angleb->Draw("same");	
-	c1->cd(4);  pbalances ->Draw();  pbalanceb->	SetLineColor(kRed);   pbalanceb ->Draw("same");	
-	c1->cd(5);  etahs->Draw();       etahb->	SetLineColor(kRed);   etahb->Draw("same");	
-	c1->cd(6);  sphericitys->Draw(); sphericityb->	SetLineColor(kRed);   sphericityb->Draw("same");	
-	c1->SaveAs("sig_background_distr.pdf");	
+   f->Write();
+  	/*Plot the simulated and background variable distributions */
 	
-
-
-	for(Int_t i = 1; i++; i < 5)
-	{ 
-		TString structure = "@dEta, @dPhi, @EtaH, @pBalance, @Sphericity, @Angle:" + TString::Itoa(i*5, 10) + ":1:type";
+		TString structure = "@dEta, @dPhi, @EtaH, @pBalance, @Sphericity, @Angle, @MH:" + TString::Itoa(50, 10) + ":1:type";
 		trainNetwork(simu, structure, 100);
-
-	}
+		return(0);
 }
