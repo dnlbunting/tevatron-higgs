@@ -50,7 +50,7 @@ void CreateTraining(TString working_directory   = "~/Documents/Imperial/project/
             TTree* train_background = new TTree("train_background", "train background"); 
 			 
 			/* Input branch addresses */            
-	        Double_t MH[6], dEta[6], dPhi[6], Angle[6], EtaH[6], pBalance[6], Sphericity;
+	        Double_t MH[6], dEta[6], dPhi[6], Angle[6], EtaH[6], pBalance[6], Sphericity, lumiCor, w3tag;;
 	        Int_t Njets, typeH[6], evtNum;
 			
 			cout << "Loading trees" << endl;
@@ -67,9 +67,11 @@ void CreateTraining(TString working_directory   = "~/Documents/Imperial/project/
 	        background_tree->SetBranchAddress("evtNum", &evtNum);           	  signal_tree->SetBranchAddress("evtNum", &evtNum);
 			background_tree->SetBranchAddress("Njets", &Njets);           	  	  signal_tree->SetBranchAddress("Njets", &Njets);
 			background_tree->SetBranchAddress("type", &typeH);           	  	  signal_tree->SetBranchAddress("type", &typeH);
+			background_tree->SetBranchAddress("w3tag", &w3tag); 				  signal_tree->SetBranchAddress("w3tag", &w3tag); 
+			background_tree->SetBranchAddress("lumiCor", &lumiCor);               signal_tree->SetBranchAddress("lumiCor", &lumiCor); 
 			
 			/* Output branch addresses */
-		    Double_t mh, deta, dphi, angle, etah, pbalance, sphericity;
+		    Double_t mh, deta, dphi, angle, etah, pbalance, sphericity, weight;
 			Bool_t isSignal, isTrain;
 			
 			cout << "Creating output trees" << endl;
@@ -84,8 +86,11 @@ void CreateTraining(TString working_directory   = "~/Documents/Imperial/project/
 			test_signal->Branch("EtaH", &etah, "EtaH/D");                    		    train_signal->Branch("EtaH", &etah, "EtaH/D"); 	                      	
 			test_signal->Branch("Sphericity",  &sphericity,  "Sphericity/D");		    train_signal->Branch("Sphericity",  &sphericity,  "Sphericity/D");	  	
 			test_signal->Branch("isSignal",   &isSignal,   "type/O");        		    train_signal->Branch("isSignal",   &isSignal,   "type/O");
-			test_signal->Branch("isTrain",   &isTrain,   "type/O");        		    train_signal->Branch("isTrain",   &isTrain,   "type/O");	          	
-				          				
+			test_signal->Branch("isTrain",   &isTrain,   "type/O");        		    	train_signal->Branch("isTrain",   &isTrain,   "type/O");	
+			test_signal->Branch("w3tag", &w3tag, "w3tag/D"); 				  			train_signal->Branch("w3tag", &w3tag, "w3tag/D"); 
+			test_signal->Branch("lumiCor", &lumiCor, "lumiCor/D");               		train_signal->Branch("lumiCor", &lumiCor, "lumiCor/D");              
+		  	test_signal->Branch("weight", &weight, "weight/D");               			train_signal->Branch("weight", &weight ,"weight/D"); 
+							          				
 			test_background->Branch("MH",   &MH,   "MH/D");			             		train_background->Branch("MH",   &MH,   "MH/D");				              	
 			test_background->Branch("dEta", &deta, "dEta/D");                    		train_background->Branch("dEta", &deta, "dEta/D");	                      	
 			test_background->Branch("dPhi",  &dphi,  "dPhi/D");                  		train_background->Branch("dPhi",  &dphi,  "dPhi/D");	                      	
@@ -94,8 +99,11 @@ void CreateTraining(TString working_directory   = "~/Documents/Imperial/project/
 			test_background->Branch("EtaH", &etah, "EtaH/D");                    		train_background->Branch("EtaH", &etah, "EtaH/D"); 	                      	
 			test_background->Branch("Sphericity",  &sphericity,  "Sphericity/D");		train_background->Branch("Sphericity",  &sphericity,  "Sphericity/D");	  	
 			test_background->Branch("isSignal",   &isSignal,   "type/O");        		train_background->Branch("isSignal",   &isSignal,   "type/O");
-			test_background->Branch("isTrain",   &isTrain,   "type/O");        		train_background->Branch("isTrain",   &isTrain,   "type/O");	  	     
-          
+			test_background->Branch("isTrain",   &isTrain,   "type/O");        			train_background->Branch("isTrain",   &isTrain,   "type/O");	  	     
+			test_background->Branch("w3tag", &w3tag, "w3tag/D"); 				  		train_background->Branch("w3tag", &w3tag, "w3tag/D"); 
+			test_background->Branch("lumiCor", &lumiCor,"lumiCor/D");               	train_background->Branch("lumiCor", &lumiCor,"lumiCor/D");              
+		  	test_background->Branch("weight", &weight,"weight/D");               		train_background->Branch("weight", &weight, "weight/D");    
+		  
 		  	cout << "Filtering signal tree" << endl;
 		    /* Iterate over signal tree */  
 			Int_t nS_train, nS_test = 0;  
@@ -120,6 +128,7 @@ void CreateTraining(TString working_directory   = "~/Documents/Imperial/project/
 		            etah = EtaH[0];
 		            sphericity = Sphericity;
 		            isSignal = true; 
+					weight = lumiCor*w3tag;
 
 					/* 50/50 split between train and test */
 					if(nS_train > nS_test){isTrain =false; test_signal->Fill(); nS_test++;}
@@ -154,7 +163,8 @@ void CreateTraining(TString working_directory   = "~/Documents/Imperial/project/
 		            pbalance = pBalance[0];
 		            etah = EtaH[0];
 		            sphericity = Sphericity;
-		            isSignal = false; 
+		            isSignal = false;
+					weight = lumiCor*w3tag; 
 
 					/* 50/50 split between train and test */
 					if(nB_train > nB_test){isTrain =false; test_background->Fill(); nB_test++;}
