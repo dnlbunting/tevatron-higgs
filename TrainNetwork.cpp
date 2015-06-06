@@ -34,7 +34,7 @@ void TrainNetworkTMVA(MCData_t data, TString outfile_str, TString job_name)
 }
 
 
-TMultiLayerPerceptron* TrainNetworkROOT(TTree* merged, TString struct_string, stringstream* captured_cout, Int_t n_epoch = 100)
+TMultiLayerPerceptron* TrainNetworkROOT(TTree* merged, TString struct_string, stringstream* captured_cout, TString fname, Int_t n_epoch = 100)
 {
 	/*
 		Trains the network, returning the trained mlp object. 
@@ -55,6 +55,14 @@ TMultiLayerPerceptron* TrainNetworkROOT(TTree* merged, TString struct_string, st
 	
 	cout.rdbuf( oldCout );
 	mlp->Export("my_NN_class","C++");
+	
+	
+	TCanvas *sig_cnavas=new TCanvas("netstructure");
+	mlp->Draw();	
+	sig_cnavas->Update();
+	sig_cnavas->SaveAs(fname + "_structure.pdf"); 
+		
+
 	
 	return(mlp);
 	

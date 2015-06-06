@@ -69,12 +69,12 @@ int main (int argc, char  *argv[])
 		cin >> ss >> n_epoch;
 		if (ss == "q") { break;}
 		n = n_epoch.Atoi();
+		TString fname = "plots/" + ss.ReplaceAll(TString(':'), 1, TString('_'), 1) + "," + n_epoch;
+		ss.ReplaceAll(TString('_'), 1, TString(':'), 1);
 		stringstream *captured_cout = new stringstream() ;	
-		TMultiLayerPerceptron* mlp = TrainNetworkROOT(data.merged, "@MH, @dEta, @dPhi, @Angle, @pBalance, @EtaH, @Sphericity:" + ss + ":1:isSignal", captured_cout, n);
+		TMultiLayerPerceptron* mlp = TrainNetworkROOT(data.merged, "@MH, @dEta, @dPhi, @Angle, @pBalance, @EtaH, @Sphericity:" + ss + ":1:isSignal", captured_cout, fname, n);
 		evaluate = Evaluate(mlp, data, 100);
 		
-		TString fname = "plots/" + ss.ReplaceAll(TString(':'), 1, TString('_'), 1) + "," + n_epoch;
-
 		max_sig = SignificancePlot(evaluate, fname);		
 		ErrorPlot(captured_cout, fname);
 		auc = ROCPlot(evaluate, fname);
