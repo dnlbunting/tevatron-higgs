@@ -8,6 +8,13 @@ s_over_sqrtb.C
 test.cxx
 test.h
 .DS_Store
+combined_output.root
+main
+main.dSYM/
+mlp_train.root
+my_NN_class.cxx
+my_NN_class.h
+plots/
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
