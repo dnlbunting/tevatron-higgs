@@ -1,8 +1,8 @@
 %!TEX root = /Users/Daniel/Documents/Imperial/project/tevatron-higgs/report/report.tex
 
 In any scenario where statistical methods are used to interpret data selecting features in order to maximise the discriminatory or explanatory power of the model plays a critical role.
-From the b-tagged jets, the jets with the highest and second highest transverse momentum $P_t$ were identified as being the putative product of the decaying Higgs boson, with all the following variable differences are considered to be taken between these leading jets. 
-From the raw simulation data, following \cite{Abazov201197} seven feature variables were extracted and used as inputs to the classification neural network. 
+From the b-tagged jets, those with the highest and second highest transverse momentum $P_t$ were identified as being the putative product of the decaying Higgs boson, with all the following variable differences are considered to be taken between these leading jets. 
+Following \cite{Abazov201197} seven feature variables were extracted from the raw simulation data, and used as inputs to the classification neural network. 
 
 \subsubsection*{Pseudorapidity difference $ \Delta\eta $ } % (fold)
 \label{ssub:pseudorapidity}
@@ -11,7 +11,7 @@ Te pseudorapidity of a jet is defined as
 \begin{equation}
 	\eta = - \ln\left[\tan\left( \frac{\theta}{2} \right)\right]
 \end{equation}
-where $\theta$ is the angle between the jet and the beam axis. The pseudorapidity is preferred to the $\theta$ as it is Lorentz invariant.
+where $\theta$ is the angle between the jet and the beam axis. The pseudorapidity is preferred to $\theta$ as the difference between two pseudorapidity is Lorentz invariant.
 % subsubsection pseudorapidity (end)
 
 
@@ -48,37 +48,37 @@ Additionally we define the \textbf{azimuthal angle difference $ \Delta\phi $}, t
 
 \begin{figure}[htbp]
 	\centering	
-	\begin{subfigure}[b]{0.25\textwidth}
+	\begin{subfigure}[b]{0.3\textwidth}
 	                \includegraphics[width=\textwidth]{img/mh}
 	                \caption{Invariant mass}
 	                \label{fig:mh}
 	\end{subfigure}
-	\begin{subfigure}[b]{0.25\textwidth}
+	\begin{subfigure}[b]{0.3\textwidth}
 	                \includegraphics[width=\textwidth]{img/angle}
 	                \caption{$\eta_H - \eta_1$}
 	                \label{fig:angle}
 	\end{subfigure}
-	\begin{subfigure}[b]{0.25\textwidth}
+	\begin{subfigure}[b]{0.3\textwidth}
 	                \includegraphics[width=\textwidth]{img/deta}
 	                \caption{$\Delta\eta$}
 	                \label{fig:deta}
 	\end{subfigure}
-	\begin{subfigure}[b]{0.25\textwidth}
+	\begin{subfigure}[b]{0.3\textwidth}
 	                \includegraphics[width=\textwidth]{img/dphi}
 	                \caption{$\Delta\phi$}
 	                \label{fig:dphi}
 	\end{subfigure}	
-	\begin{subfigure}[b]{0.25\textwidth}
+	\begin{subfigure}[b]{0.3\textwidth}
 	                \includegraphics[width=\textwidth]{img/etah}
 	                \caption{$\eta_H$}
 	                \label{fig:etah}
 	\end{subfigure}
-	\begin{subfigure}[b]{0.25\textwidth}
+	\begin{subfigure}[b]{0.3\textwidth}
 	                \includegraphics[width=\textwidth]{img/pbalance}
 	                \caption{Momentum balance}
 	                \label{fig:pbal}
 	\end{subfigure}
-	\begin{subfigure}[b]{0.25\textwidth}
+	\begin{subfigure}[b]{0.3\textwidth}
 	                \includegraphics[width=\textwidth]{img/sphericity}
 	                \caption{Sphericity}
 	                \label{fig:sphericity}

@@ -1,6 +1,7 @@
+%!TEX root = /Users/Daniel/Documents/Imperial/project/tevatron-higgs/report/report.tex
 
-Artificial neural networks (ANNs) are a machine learning approach to classification/regression problems, consisting of stacked layers of neurons implementing a nonlinear activation function interlinked with linear synapses. 
-For our purposes, the activation function $g(x)$ is taken as a sigmoid and the output node a single logistic regression node, this class of ANNs are called Multilayer Perceptrons (MLPs). 
+Artificial neural networks (ANNs) are a machine learning approach to classification/regression problems. They consist of stacked layers of neurons, each implementing a nonlinear activation function, interlinked with linear synapses. 
+We utilise a class of feedforward ANNs called Multilayer Perceptrons (MLPs), where activation function $g(x)$ is taken as a sigmoid and the output node a single logistic regression node
 
 \begin{figure}[htbp]
 	\centering
@@ -17,11 +18,10 @@ As a supervised machine learning problem, ANNs are trained by minimising the neg
 \end{align}
 
 where \textbf{W} denotes the weight matrices collectively and $\mathcal{D}$ the data.
-Due to the nonlinearity of the activation function the NLL is a non-convex function of \textbf{W}, so it is minimised using random restarts of stochastic gradient descent. 
+Due to the nonlinearity of the activation function the NLL is in general a non-convex function of \textbf{W}, so it is minimised using random restarts of stochastic gradient descent. 
 A strength of ANNs is that the gradient of the NLL can be efficiently computed by the backpropagation algorithm \cite{murphy2012machine}, which allows that gradient at the $n$th hidden layer to be calculated in terms of the error at the $(n+1)$th layer, so computation can start at the output layer and work backwards.
 Once the gradient has been calculated the weights are optimised and the output estimates $\hat{y}$ updated by forward propagating the inputs through the network. A single backpropagation, optimisation, forward propagation cycle is called an epoch.
-In order to avoid overfitting, the input data is split and 50\% reserved as a ``test set'' . 
-After each epoch the network is evaluated on the on the test set and the misclassification error 
+In order to avoid overfitting, the input data is split and 50\% reserved as a ``test set'' so that after each epoch the network can be evaluated on the unseen test set and the misclassification error 
 $e = \frac{1}{N_{test}}\sum_{i = 1}^{N_{test}} \mathbf{1}\{y^i \ne \hat{y}^i \} $
-calculated, training is stopped when $e$ stops declining significantly.
+calculated. Training is stopped when $e$ stops declining significantly, indicating that the network has learned all it can and further training is likely to decrease performance. 
 We used the Cern ROOT \cite{citeulike:363715} implementation of an MLP, \texttt{TMultiLayerPerceptron} due to its tight integration with the rest of the ROOT data analysis frame, despite it lacking some desirable features.
