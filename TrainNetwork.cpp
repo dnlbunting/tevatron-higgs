@@ -11,24 +11,23 @@ void TrainNetworkTMVA(MCData_t data, TString outfile_str, TString job_name)
 	factory->AddBackgroundTree( data.train_background, 1.0, TMVA::Types::kTraining);
 	factory->AddBackgroundTree( data.test_background, 1.0, TMVA::Types::kTesting);
 	
-	//factory->AddVariable( "MH",         'F' );
+	factory->AddVariable( "MH",         'F' );
 	factory->AddVariable( "dEta",       'F' );
 	factory->AddVariable( "dPhi",   	'F' );
-	//factory->AddVariable( "Angle",      'F' );
+	factory->AddVariable( "Angle",      'F' );
 	factory->AddVariable( "pBalance",   'F' );
-	//factory->AddVariable( "EtaH",       'F' );
-	//factory->AddVariable( "Sphericity", 'F' );
+	factory->AddVariable( "EtaH",       'F' );
+	factory->AddVariable( "Sphericity", 'F' );
 	
 	
 
 	
-	factory->BookMethod( TMVA::Types::kMLP, "MLP_ANN","ConvergenceTests=5:VerbosityLevel=Debug" );
+	factory->BookMethod( TMVA::Types::kMLP, "MLP_ANN");
 
 	
 	factory->TrainAllMethods();
-		delete factory;/*
 	factory->TestAllMethods();
-	factory->EvaluateAllMethods();*/
+	factory->EvaluateAllMethods();
 	
 	
 }
