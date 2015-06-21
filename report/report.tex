@@ -6,10 +6,14 @@
 \usepackage{caption} 
 \usepackage{subcaption}
 \usepackage{pdflscape}
+\usepackage{listings}
 
-\title{Tevatron Higgs} 
+\title{Searching for Supersymmetric Higgs Bosons} 
 \author{ Daniel C E Bunting \& Amalia Madden} 
 \date{\today}
+
+\newcommand{\includecode}[2][c]{\lstinputlisting[caption=#2, escapechar=, style=custom#1]{#2}}
+
 
 \begin{document}
 
@@ -24,7 +28,7 @@
 
 \section{Theory} % (fold)
 \label{sec:theory}
-
+\input{tex/theory}
 
 
 % section theory (end)
@@ -55,22 +59,34 @@
 
 % section method (end)
 
-\section{Discusion} % (fold)
-\label{sec:discusion}
 
-% section discusion (end)
 
 \section{Conclusion} % (fold)
 \label{sec:conclusion}
-
+\input{tex/conclusion}
 % section conclusion (end)
 
+\section*{Author Contributions} % (fold)
+\label{sec:author_contributions}
+DB wrote section 3.
+AM wrote sections 1 and 2.
+We wrote section 4 together.
 
+% section author_contributions (end)
+\section*{Source Code} % (fold)
+\label{sec:source_code}
 
+Throughout the project we used GitHub for collaborating and version control and our entire source code tree can be found at \url{https://github.com/dnlbunting/tevatron-higgs/}.
+
+% section source_code (end)
 
 \bibliography{tevatronhiggs}
 \bibliographystyle{unsrt} 
 
-\clearpage
 
 \end{document} 
+
+
+
+
+

@@ -25,6 +25,25 @@ The ROC curve is the parametric plot of the true positive rate (tpr) against the
 	      \caption{Distribution of model scores for signal (red) and background (blue) events}
 	\end{subfigure}
 
-	\caption{Diagnostic plots for a train ANN with two layers of 7 and 6 hidden nodes }
+	\caption{Diagnostic plots for a train ANN with two layers of seven and six hidden nodes }
 	\label{fig:label}
 \end{figure}
+
+In order to evaluate the reliance of the network on the (hypothesised) invariant dijet mass, the network was trained and evaluated both with and without $M_H$ over single layer configurations with between 1 and 50 hidden nodes.
+As expected Figure~\ref{fig:mhcomp} shows that removing $M_H$ as a feature had a significant negative effect on the accuracy of the network.
+
+\begin{figure}[htbp]
+	\centering
+	\begin{subfigure}{0.49\textwidth}
+	      \includegraphics[width=\textwidth]{img/auc_1}
+	      \caption{Area under ROC curve (AUC)}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		  \includegraphics[width=\textwidth]{img/sig_1}
+		  \caption{Maximum significance}
+	\end{subfigure}
+	\caption{The ANN evaluated with (blue) and without (red) the invariant dijet mass $M_H$ as a feature }
+	\label{fig:mhcomp}
+\end{figure}
+
+We also considered the effect of a second hidden layer on the discriminatory power of the ANN

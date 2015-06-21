@@ -40,11 +40,62 @@ The momentum balance of the leading b jet pair is defined
 
 % subsubsection sphericity_s (end)
 
+\subsubsection{Invariant Mass} % (fold)
+\label{ssub:invariant_mass}
 
-Additionally we define the \textbf{azimuthal angle difference $ \Delta\phi $}, the \textbf{combined pseudorapidity $\eta_H$}, the \textbf{difference between the leading jet and the Higgs $\eta_H - \eta_1$} and the \textbf{invariant di-jet mass $M_H$}.
+\begin{equation}
+	M_H = \sqrt{\sum_{Dijet}{E^2 - p^2}}
+\end{equation}
+
+As can be seen in Table~\ref{tab:corr} the invariant dijet mass is a strong predictor of whether an event is Higgs decay and including it in the ANN significantly increased its discriminatory power.
+However since the Higgs mass is not predicted by the Standard Model it must be hypothesised during the simulation stage, so in order to avoid training the ANN to depend too heavily on a particular value of $M_H$ we tested models both with and without $M_H$
+% subsubsection invariant_mass (end)
 
 
+Additionally we define the \textbf{azimuthal angle difference $ \Delta\phi $}, the \textbf{combined pseudorapidity $\eta_H$}, the \textbf{difference between the leading jet and the Higgs $\eta_H - \eta_1$}.
 
+\begin{figure}[htbp]
+	\centering
+	\begin{subfigure}[b]{0.395\textwidth}
+		\includegraphics[width=\textwidth]{img/background_corr}
+		\caption{Background}
+		\label{fig:mh}
+		\vspace{7mm}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.5\textwidth}
+		                \includegraphics[width=\textwidth]{img/signal_corr}
+		                \caption{Signal}
+		                \label{fig:mh}
+		\end{subfigure}
+	
+	\caption{Matrices of the Pearson product-moment correlation coefficients between each of the features}
+	\label{fig:cormat}
+	\end{figure} 
+
+	
+In order to evaluate the the feature selection the correlation matrices between the features for the signal and background events were calculated and shown in Figure~\ref{fig:cormat}. 
+The correlations between each feature and the output variable were also calculated and are summarised in  Table~\ref{tab:corr}. 
+The features selected for inclusion in a model should be both highly correlated with the output and weakly correlated with each other. A high correlation between two features suggests redundancy, which should be avoided as unnecessarily complex models take longer and require more data (which may not be available) to train.
+$\eta_{H}$ is a potential candidate for removal since it is very weakly correlated with the output.  
+	\begin{table}
+		\begin{center}
+		\begin{tabular}{ll}
+			\textbf{Feature} & \textbf{Correlation} \\
+			\hline
+			$\Delta\eta$ & 0.329\\			
+			$M_{H}$ & 0.204 \\
+			$\Delta\Phi$ &  0.176\\
+			Sphericity & 0.150\\
+			Momentum Balance &  0.134\\
+			$\eta_H - \eta_1$ &  0.0343 \\
+			$\eta_{H}$ & 0.00359\\
+			
+		\end{tabular}
+		\end{center}
+		\caption{The correlation between each of the features and the output variable}
+		\label{tab:corr}
+	\end{table}
+	
 
 \begin{figure}[htbp]
 	\centering	
@@ -87,5 +138,8 @@ Additionally we define the \textbf{azimuthal angle difference $ \Delta\phi $}, t
 	\caption{Distributions of the input features. All y scales are events. The signal is in blue and the background in red.}
 	
 	\label{fig:label}
-\end{figure} 
+
+
+
+\end{figure}
 
